@@ -1,0 +1,61 @@
+# ======================
+# DOCKER - BurgerHouse
+# ======================
+
+version: "3.8"
+
+services:
+  # ===================================
+  # SERVICIO 1: Nuestra API
+  # ===================================
+  api:
+    build: .             # Construye la imagen desde el Dockerfile
+    container_name: burgerhouse-api
+    ports:
+      - "3000:3000"      # Puerto local:Puerto contenedor
+    environment:
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongo:27017/burgerhouse
+      - JWT_SECRET=burgerhouse_secreto_super_seguro_2026
+      - JWT_EXPIRES_IN=7d
+      - CULQI_SECRET_KEY=sk_test_TUIyOTQxMzNlZjI3OGQ4OA==
+      - NODE_ENV=development
+    depends_on:
+      - mongo             # La API espera a que MongoDB inicie primero
+    volumes:
+      - .:/app            # Sincroniza los archivos locales con el contenedor
+      - /app/node_modules # Excluye node_modules del volumen
+    restart: unless-stopped
+
+  # ===================================
+  # SERVICIO 2: MongoDB
+  # ===================================
+  mongo:
+    image: mongo:6.0     # Imagen oficial de MongoDB
+    container_name: burgerhouse-mongo
+    ports:
+      - "27017:27017"    # Puerto para conectarte con MongoDB Compass
+    volumes:
+      - mongo_data:/data/db  # Guarda los datos aunque el contenedor se reinicie
+    restart: unless-stopped
+
+  # ===================================
+  # SERVICIO 3: Mongo Express (Panel visual de MongoDB)
+  # Acceder en: http://localhost:8081
+  # ===================================
+  mongo-express:
+    image: mongo-express
+    container_name: burgerhouse-mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+# Volumen persistente para MongoDB
+volumes:
+  mongo_data:

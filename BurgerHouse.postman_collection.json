@@ -1,0 +1,276 @@
+{
+  "info": {
+    "name": "BurgerHouse API",
+    "description": "Colección completa para probar la BurgerHouse API - Proyecto Final",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "Se llena automáticamente al hacer login"
+    }
+  ],
+  "item": [
+    {
+      "name": "🏠 Home",
+      "item": [
+        {
+          "name": "Bienvenida API",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/",
+            "description": "Verifica que la API esté funcionando"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Registrar Usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) { pm.collectionVariables.set('token', res.token); }",
+                  "pm.test('Registro exitoso', () => pm.response.to.have.status(201));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan Pérez\",\n  \"email\": \"juan@ejemplo.com\",\n  \"password\": \"123456\",\n  \"phone\": \"987654321\",\n  \"address\": \"Av. Lima 123, Miraflores\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Iniciar Sesión",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) { pm.collectionVariables.set('token', res.token); console.log('Token guardado:', res.token); }",
+                  "pm.test('Login exitoso', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juan@ejemplo.com\",\n  \"password\": \"123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Ver Perfil",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/auth/profile",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "🍔 Productos",
+      "item": [
+        {
+          "name": "Listar Todos los Productos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/products"
+          }
+        },
+        {
+          "name": "Filtrar por Precio (min/max)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/products?minPrice=10&maxPrice=25",
+              "query": [
+                { "key": "minPrice", "value": "10" },
+                { "key": "maxPrice", "value": "25" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar Productos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/products/search?q=hamburguesa",
+              "query": [{ "key": "q", "value": "hamburguesa" }]
+            }
+          }
+        },
+        {
+          "name": "Filtrar por Categoría - hamburguesas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/products/category/hamburguesas"
+          }
+        },
+        {
+          "name": "Filtrar por Categoría - bebidas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/products/category/bebidas"
+          }
+        },
+        {
+          "name": "Filtrar por Categoría - combos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/products/category/combos"
+          }
+        },
+        {
+          "name": "Filtrar por Categoría - papas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/products/category/papas"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🛒 Carrito",
+      "item": [
+        {
+          "name": "Ver Carrito",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cart",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Agregar Producto",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/cart/add",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"REEMPLAZA_CON_ID_REAL\",\n  \"quantity\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Primero obtén un productId real desde GET /api/products"
+          }
+        },
+        {
+          "name": "Aplicar Cupón PROMO10",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/cart/coupon",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"PROMO10\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar Producto del Carrito",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/cart/remove/REEMPLAZA_CON_PRODUCT_ID",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Reemplaza REEMPLAZA_CON_PRODUCT_ID con el ID del producto"
+          }
+        }
+      ]
+    },
+    {
+      "name": "💳 Pagos",
+      "item": [
+        {
+          "name": "Crear Pago (Culqi Sandbox)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/payment/create",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"culqiToken\": \"tok_test_vzMuTl8YlRd1HNG\",\n  \"deliveryAddress\": \"Av. Arequipa 1234, Lima\"\n}"
+            },
+            "description": "Token de prueba Culqi Sandbox. En producción se genera desde el frontend con Culqi.js"
+          }
+        },
+        {
+          "name": "Confirmar Pedido",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/payment/confirm",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"REEMPLAZA_CON_ORDER_ID\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📦 Mis Pedidos",
+      "item": [
+        {
+          "name": "Ver Todos Mis Pedidos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/orders",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Ver Pedido por ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/orders/REEMPLAZA_CON_ORDER_ID",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    }
+  ]
+}
