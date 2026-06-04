@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🍔 BurgerHouse</title>
   <style>
-    /* ===== RESET Y VARIABLES ===== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
@@ -28,7 +27,6 @@
       min-height: 100vh;
     }
 
-    /* ===== NAVBAR ===== */
     nav {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -73,11 +71,9 @@
       font-weight: 700;
     }
 
-    /* ===== PÁGINAS ===== */
     .page { display: none; padding: 2rem; max-width: 1000px; margin: 0 auto; }
     .page.active { display: block; }
 
-    /* ===== TÍTULO DE SECCIÓN ===== */
     .page-title {
       font-size: 1.5rem;
       font-weight: 700;
@@ -87,7 +83,6 @@
       gap: 0.5rem;
     }
 
-    /* ===== ALERT / TOAST ===== */
     #toast {
       position: fixed;
       bottom: 2rem; right: 2rem;
@@ -106,7 +101,6 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ===== FORMULARIOS ===== */
     .form-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -163,7 +157,6 @@
       text-decoration: underline;
     }
 
-    /* ===== FILTROS DE PRODUCTOS ===== */
     .filters {
       display: flex;
       gap: 0.5rem;
@@ -212,7 +205,6 @@
       color: #000;
     }
 
-    /* ===== GRID DE PRODUCTOS ===== */
     .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -268,7 +260,6 @@
       letter-spacing: 1px;
     }
 
-    /* ===== CARRITO ===== */
     .cart-item {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -346,7 +337,6 @@
     }
     .coupon-row button:hover { border-color: var(--yellow); color: var(--yellow); }
 
-    /* ===== PAGO ===== */
     .pay-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -358,7 +348,6 @@
     .card-row { display: flex; gap: 0.8rem; }
     .card-row .form-group { flex: 1; }
 
-    /* ===== PEDIDOS ===== */
     .order-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -386,7 +375,6 @@
     .order-items { font-size: 0.82rem; color: var(--muted); margin-bottom: 0.6rem; line-height: 1.8; }
     .order-total { font-weight: 700; color: var(--yellow); font-size: 0.95rem; }
 
-    /* ===== EMPTY STATE ===== */
     .empty {
       text-align: center;
       padding: 3rem;
@@ -395,7 +383,6 @@
     .empty .empty-icon { font-size: 3rem; margin-bottom: 0.5rem; }
     .empty p { font-size: 0.9rem; }
 
-    /* ===== LOADING ===== */
     .loading {
       text-align: center;
       padding: 2rem;
@@ -403,7 +390,6 @@
       font-size: 0.9rem;
     }
 
-    /* ===== PERFIL ===== */
     .profile-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -433,7 +419,6 @@
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav>
   <div class="nav-logo" onclick="showPage('products')">🍔 BurgerHouse</div>
   <div class="nav-links" id="nav-links">
@@ -446,10 +431,8 @@
   </div>
 </nav>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
-<!-- ===== PÁGINA: PRODUCTOS ===== -->
 <div class="page active" id="page-products">
   <div class="page-title">🍔 Nuestro Menú</div>
 
@@ -540,8 +523,7 @@
 // ===================================
 // CONFIGURACIÓN
 // ===================================
-const API = "http://localhost:3000"; // Cambia esto por tu URL de Render en producción
-
+const API = "http://localhost:3000"; 
 // ===================================
 // ESTADO GLOBAL
 // ===================================
@@ -549,11 +531,6 @@ let token = localStorage.getItem("token") || null;
 let currentUser = JSON.parse(localStorage.getItem("user") || "null");
 let cartItems = [];
 
-// ===================================
-// UTILIDADES
-// ===================================
-
-// Muestra un mensaje tipo toast
 function showToast(msg, type = "success") {
   const t = document.getElementById("toast");
   t.textContent = msg;
@@ -574,7 +551,6 @@ async function api(method, path, body = null) {
   return res.json();
 }
 
-// Muestra/oculta páginas
 function showPage(name) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
@@ -586,7 +562,6 @@ function showPage(name) {
   if (name === "profile") loadProfile();
 }
 
-// Actualiza la navbar según si hay sesión
 function updateNav() {
   const loggedIn = !!token;
   document.getElementById("btn-login").style.display  = loggedIn ? "none" : "inline-block";
